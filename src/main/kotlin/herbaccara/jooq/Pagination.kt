@@ -18,12 +18,16 @@ class Pagination {
 
         @JvmStatic
         fun sortFields(sort: Sort, dialect: SQLDialect): List<SortField<Any>> {
-            if (sort.isEmpty) return emptyList()
-
             val quote = when (dialect) {
                 MYSQL, MARIADB, H2 -> "`"
                 else -> "\""
             }
+            return sortFields(sort, quote)
+        }
+
+        @JvmStatic
+        fun sortFields(sort: Sort, quote: String): List<SortField<Any>> {
+            if (sort.isEmpty) return emptyList()
 
             return sort.map { s ->
                 val field = DSL.field("${quote}${s.property}$quote")
