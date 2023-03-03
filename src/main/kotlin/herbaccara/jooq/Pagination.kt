@@ -1,6 +1,7 @@
 package herbaccara.jooq
 
 import org.jooq.*
+import org.jooq.SQLDialect.*
 import org.jooq.impl.DSL
 import org.springframework.data.domain.*
 
@@ -18,7 +19,7 @@ class Pagination {
             if (sort.isEmpty) return emptyList()
 
             val quote = when (dialect) {
-                SQLDialect.MYSQL, SQLDialect.H2 -> "`"
+                MYSQL, MARIADB, H2 -> "`"
                 else -> "\""
             }
 
