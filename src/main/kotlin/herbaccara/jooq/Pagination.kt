@@ -6,43 +6,40 @@ import org.jooq.SelectLimitStep
 import org.jooq.impl.DSL
 import org.springframework.data.domain.*
 
-object Pagination {
+class Pagination {
 
-    @JvmStatic
-    fun <R : Record, E> ofSlice(
-        query: SelectLimitStep<R>,
-        pageable: Pageable,
-        mapper: (record: R) -> E
-    ): Slice<E> {
-        val content = query
-            .limit(pageable.offset, pageable.pageSize + 1)
-            .map(mapper)
+    companion object {
 
-        val hasNext = content.size > pageable.pageSize
+        @JvmStatic
+        fun <R : Record, E> ofSlice(
+            query: SelectLimitStep<R>,
+            pageable: Pageable,
+            mapper: (record: R) -> E
+        ): Slice<E> {
+            val content = query
+                .limit(pageable.offset, pageable.pageSize + 1)
+                .map(mapper)
 
-        return SliceImpl(content.take(pageable.pageSize), pageable, hasNext)
-    }
+            val hasNext = content.size > pageable.pageSize
 
-    @JvmStatic
-    @JvmOverloads
-    fun <R : Record, E> ofPage(
-        dsl: DSLContext,
-        query: SelectLimitStep<R>,
-        pageable: Pageable,
-        countQuery: SelectLimitStep<R>? = null,
-        mapper: (record: R) -> E
-    ): Page<E> {
-        val sql = query.sql
+            return SliceImpl(content.take(pageable.pageSize), pageable, hasNext)
+        }
 
-        val content = query
-            .limit(pageable.offset, pageable.pageSize)
-            .map(mapper)
+        @JvmStatic
+        fun <R : Record, E> ofPage(
+            dsl: DSLContext,
+            query: SelectLimitStep<R>,
+            pageable: Pageable,
+            mapper: (record: R) -> E
+        ): Page<E> {
+            val sql = query.sql
 
-        val total = if (content.size < pageable.pageSize) {
-            content.size
-        } else {
-            if (countQuery != null) {
-                dsl.fetchCount(countQuery)
+            val content = query
+                .limit(pageable.offset, pageable.pageSize)
+                .map(mapper)
+
+            val total = if (content.size < pageable.pageSize) {
+                content.size
             } else {
                 dsl
                     .select(DSL.count())
@@ -50,8 +47,8 @@ object Pagination {
                     .single()
                     .value1()
             }
-        }
 
-        return PageImpl(content, pageable, total.toLong())
+            return PageImpl(content, pageable, total.toLong())
+        }
     }
 }
