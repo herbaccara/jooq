@@ -13,9 +13,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 
 abstract class JooqRepository<R : Record, T : TableImpl<R>, ID>(
-    private val dsl: DSLContext,
-    private val table: T,
-    private val idField: TableField<R, ID>
+    protected val dsl: DSLContext,
+    protected val table: T,
+    protected val idField: TableField<R, ID>
 ) {
     fun deleteAllByIdInBatch(vararg id: ID) {
         id.map {
