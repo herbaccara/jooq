@@ -17,7 +17,7 @@ abstract class JooqRepository<R : Record, T : TableImpl<R>, ID>(
     protected val table: T,
     protected val idField: TableField<R, ID>
 ) {
-    fun deleteAllByIdInBatch(vararg id: ID) {
+    open fun deleteAllByIdInBatch(vararg id: ID) {
         id.map {
             dsl.deleteFrom(table)
                 .where(
@@ -28,7 +28,7 @@ abstract class JooqRepository<R : Record, T : TableImpl<R>, ID>(
         }
     }
 
-    fun deleteAllById(vararg id: ID) {
+    open fun deleteAllById(vararg id: ID) {
         dsl.deleteFrom(table)
             .where(
                 idField.`in`(*id)
@@ -36,19 +36,19 @@ abstract class JooqRepository<R : Record, T : TableImpl<R>, ID>(
             .execute()
     }
 
-    fun deleteAll() {
+    open fun deleteAll() {
         dsl.deleteFrom(table).execute()
     }
 
-    fun deleteById(id: ID) {
+    open fun deleteById(id: ID) {
         deleteAllById(id)
     }
 
-    fun existsByIx(id: ID): Boolean {
+    open fun existsByIx(id: ID): Boolean {
         return findById(id) != null
     }
 
-    fun findById(id: ID): R? {
+    open fun findById(id: ID): R? {
         return dsl
             .selectFrom(table)
             .where(
@@ -58,7 +58,7 @@ abstract class JooqRepository<R : Record, T : TableImpl<R>, ID>(
     }
 
     @JvmOverloads
-    fun findAll(block: (query: SelectWhereStep<R>) -> Unit = {}): Result<R> {
+    open fun findAll(block: (query: SelectWhereStep<R>) -> Unit = {}): Result<R> {
         return dsl
             .selectFrom(table)
             .also(block)
@@ -66,7 +66,7 @@ abstract class JooqRepository<R : Record, T : TableImpl<R>, ID>(
     }
 
     @JvmOverloads
-    fun page(pageable: Pageable, block: (query: SelectConditionStep<R>) -> Unit = {}): Page<R> {
+    open fun page(pageable: Pageable, block: (query: SelectConditionStep<R>) -> Unit = {}): Page<R> {
         val query = dsl
             .selectFrom(table)
             .where(
@@ -78,7 +78,7 @@ abstract class JooqRepository<R : Record, T : TableImpl<R>, ID>(
     }
 
     @JvmOverloads
-    fun slice(pageable: Pageable, block: (query: SelectConditionStep<R>) -> Unit = {}): Slice<R> {
+    open fun slice(pageable: Pageable, block: (query: SelectConditionStep<R>) -> Unit = {}): Slice<R> {
         val query = dsl
             .selectFrom(table)
             .where(
