@@ -4,6 +4,8 @@ import org.jooq.*
 import org.jooq.SQLDialect.*
 import org.jooq.impl.DSL
 import org.springframework.data.domain.*
+import org.springframework.data.domain.Sort.Direction
+import org.springframework.data.domain.Sort.NullHandling
 
 class Pagination {
 
@@ -25,10 +27,10 @@ class Pagination {
 
             return sort.map { s ->
                 val field = DSL.field("${quote}${s.property}$quote")
-                val sortField = if (s.direction == Sort.Direction.ASC) field.asc() else field.desc()
+                val sortField = if (s.direction == Direction.ASC) field.asc() else field.desc()
                 when (s.nullHandling) {
-                    Sort.NullHandling.NULLS_FIRST -> sortField.nullsFirst()
-                    Sort.NullHandling.NULLS_LAST -> sortField.nullsLast()
+                    NullHandling.NULLS_FIRST -> sortField.nullsFirst()
+                    NullHandling.NULLS_LAST -> sortField.nullsLast()
                     else -> sortField
                 }
             }.toList()
