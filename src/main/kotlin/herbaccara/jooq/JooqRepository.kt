@@ -60,10 +60,12 @@ abstract class JooqRepository<R : Record, T : TableImpl<R>, ID>(
 
     @JvmOverloads
     open fun findAll(block: Consumer<SelectWhereStep<R>> = Consumer { }): Result<R> {
-        return dsl
+        val query = dsl
             .selectFrom(table)
-            .also(block::accept)
-            .fetch()
+
+        query.also(block::accept)
+
+        return query.fetch()
     }
 
     @JvmOverloads
