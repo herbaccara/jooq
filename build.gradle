@@ -11,7 +11,7 @@ plugins {
 
 group = 'herbaccara'
 version = '0.0.11'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 publishing {
     publications {
@@ -48,7 +48,7 @@ dependencies {
 tasks.withType(KotlinCompile) {
     kotlinOptions {
         freeCompilerArgs = ['-Xjsr305=strict']
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
 }
 
