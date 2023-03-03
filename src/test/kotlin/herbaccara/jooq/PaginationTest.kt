@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.springframework.data.domain.Sort.Order
 import java.io.File
 
 class PaginationTest {
@@ -28,8 +30,28 @@ class PaginationTest {
         )
         .from(table)
         .where(
-            DSL.condition("1 = 1")
+            DSL.noCondition()
         )
+
+    @Test
+    fun sort() {
+        val pageRequest = PageRequest.of(
+            0,
+            10,
+            Sort.by(
+                Order.asc("title"),
+                Order.desc("id")
+            )
+        )
+        val pageable = pageRequest.toOptional().get()
+
+        val page = Pagination.ofPage(dsl, baseQuery, pageable) {
+            it.value1() to it.value2()
+        }
+
+        assertEquals(22, page.totalElements)
+        assertTrue(page.hasNext())
+    }
 
     @Test
     fun ofPage() {
@@ -49,7 +71,7 @@ class PaginationTest {
         val pageRequest = PageRequest.of(0, 10)
         val pageable = pageRequest.toOptional().get()
 
-        val slice = Pagination.ofSlice(baseQuery, pageable) {
+        val slice = Pagination.ofSlice(dsl, baseQuery, pageable) {
             it.value1() to it.value2()
         }
 

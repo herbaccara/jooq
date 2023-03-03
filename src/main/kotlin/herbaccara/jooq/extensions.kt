@@ -16,5 +16,5 @@ fun <R : UpdatableRecord<R>, P, T> DAOImpl<R, P, T>.page(pageable: Pageable): Pa
 
 fun <R : UpdatableRecord<R>, P, T> DAOImpl<R, P, T>.slice(pageable: Pageable): Slice<P> {
     val query = ctx().selectFrom(table).where(DSL.noCondition())
-    return Pagination.ofSlice(query, pageable) { it.into(type) }
+    return Pagination.ofSlice(ctx(), query, pageable) { it.into(type) }
 }
