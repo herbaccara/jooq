@@ -10,7 +10,7 @@ plugins {
 }
 
 group = 'herbaccara'
-version = '0.0.9'
+version = '0.0.10'
 sourceCompatibility = '1.8'
 
 publishing {
@@ -38,7 +38,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
-    implementation 'org.jooq:jooq:3.14.16'
+    implementation 'org.jooq:jooq:3.17.0'
     implementation 'org.springframework.data:spring-data-commons:2.7.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.0'
