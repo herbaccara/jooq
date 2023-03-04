@@ -1,7 +1,9 @@
 package herbaccara.jooq
 
 import org.h2.Driver
+import org.jooq.Record3
 import org.jooq.SQLDialect
+import org.jooq.SelectConditionStep
 import org.jooq.impl.DSL
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -22,16 +24,45 @@ class PaginationTest {
 
     private val id = DSL.field("id", Int::class.java)
     private val title = DSL.field("title", String::class.java)
+    private val like = DSL.field("`like`", Int::class.java)
 
     private val baseQuery = dsl
         .select(
             id,
-            title
+            title,
+            like
         )
         .from(table)
         .where(
             title.contains("게시")
         )
+
+    @Test
+    fun seek() {
+        val query: () -> SelectConditionStep<Record3<Int, String, Int>> = {
+            dsl
+                .select(
+                    id,
+                    title,
+                    like
+                )
+                .from(table)
+                .where(
+                    DSL.noCondition()
+                )
+        }
+
+        val sort = Sort.by(Order.desc("id"))
+        val limit = 5
+
+        val firstPage = Pagination.ofSeek(dsl, query(), sort, limit, emptyList()) { it }
+        val last = firstPage.lastOrNull()
+        if (last != null) {
+            val seekValues = listOf(last.get(id)) // id
+            val secondPage = Pagination.ofSeek(dsl, query(), sort, limit, seekValues) { it }
+            println()
+        }
+    }
 
     @Test
     fun sort() {

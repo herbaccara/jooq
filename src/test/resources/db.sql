@@ -1,7 +1,8 @@
 create table "board"
 (
     id    int primary key auto_increment,
-    title varchar(255) default null
+    title varchar(255) default null,
+    `like` int default rand() * 100
 );
 
 insert into "board" (title)
@@ -27,3 +28,7 @@ values ('게시물1'),
        ('게시물20'),
        ('게시물21'),
        ('게시물22');
+
+insert into "board" (title, `like`)
+values ('게시물23', 32),
+       ('게시물24', 89);

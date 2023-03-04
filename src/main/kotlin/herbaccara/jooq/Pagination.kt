@@ -41,6 +41,28 @@ class Pagination {
         }
 
         @JvmStatic
+        fun <R : Record, E> ofSeek(
+            dsl: DSLContext,
+            query: SelectConditionStep<R>,
+            sort: Sort,
+            limit: Int,
+            seekValues: List<Any?>,
+            mapper: (record: R) -> E
+        ): List<E> {
+            val sortFields = sortFields(sort, dsl)
+
+            return query
+                .orderBy(sortFields)
+                .apply {
+                    if (seekValues.isNotEmpty()) {
+                        seek(*seekValues.toTypedArray())
+                    }
+                }
+                .limit(limit)
+                .map(mapper)
+        }
+
+        @JvmStatic
         fun <R : Record, E> ofSlice(
             dsl: DSLContext,
             query: SelectConditionStep<R>,
