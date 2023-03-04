@@ -51,6 +51,12 @@ class Pagination {
         ): List<E> {
             val sortFields = sortFields(sort, dsl)
 
+            if (seekValues.isNotEmpty()) {
+                if (sortFields.size != seekValues.size) {
+                    throw IllegalArgumentException("Size of seekValues and Sort do not match.")
+                }
+            }
+
             return query
                 .orderBy(sortFields)
                 .apply {
