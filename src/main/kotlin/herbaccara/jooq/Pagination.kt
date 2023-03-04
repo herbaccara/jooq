@@ -76,7 +76,7 @@ class Pagination {
             } else {
                 dsl
                     .select(DSL.count())
-                    .from("( $sql )")
+                    .from("( $sql )", *query.bindValues.toTypedArray())
                     .single()
                     .value1()
             }

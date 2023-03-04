@@ -20,8 +20,8 @@ class PaginationTest {
 
     private val table = DSL.table("\"board\"")
 
-    private val id = table.field("id", Int::class.java)
-    private val title = table.field("title", String::class.java)
+    private val id = DSL.field("id", Int::class.java)
+    private val title = DSL.field("title", String::class.java)
 
     private val baseQuery = dsl
         .select(
