@@ -65,6 +65,7 @@ class Pagination {
             mapper: (record: R) -> E
         ): Page<E> {
             val sql = query.sql
+            val bindValues = query.bindValues
 
             val content = query
                 .orderBy(sortFields(pageable.sort, dsl))
@@ -76,7 +77,7 @@ class Pagination {
             } else {
                 dsl
                     .select(DSL.count())
-                    .from("( $sql )", *query.bindValues.toTypedArray())
+                    .from("( $sql )", *bindValues.toTypedArray())
                     .single()
                     .value1()
             }

@@ -30,7 +30,7 @@ class PaginationTest {
         )
         .from(table)
         .where(
-            DSL.noCondition()
+            title.contains("게시")
         )
 
     @Test
