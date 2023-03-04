@@ -53,14 +53,22 @@ class PaginationTest {
         }
 
         val sort = Sort.by(Order.desc("id"))
-        val limit = 5
+        val limit = 10
 
-        val firstPage = Pagination.ofSeek(dsl, query(), sort, limit, emptyList()) { it }
-        val last = firstPage.lastOrNull()
-        if (last != null) {
-            val seekValues = listOf(last.get(id)) // id
-            val secondPage = Pagination.ofSeek(dsl, query(), sort, limit, seekValues) { it }
-            println()
+        val (hasNext, firstPage) = Pagination.ofSeek(dsl, query(), sort, limit, emptyList()) { it }
+        if (hasNext) {
+            var last = firstPage.lastOrNull()
+            while (last != null) {
+                val seekValues = listOf(last.get(id)) // id
+                val (hasNext2, nextPage) = Pagination.ofSeek(dsl, query(), sort, limit, seekValues) { it }
+                if (hasNext2.not()) {
+                    println("다음 페이지 없음")
+                    break
+                }
+                last = nextPage.lastOrNull()
+            }
+        } else {
+            println("다음 페이지 없음 (첫 페이지에 모든 데이터 존재)")
         }
     }
 

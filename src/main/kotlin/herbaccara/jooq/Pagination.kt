@@ -48,7 +48,7 @@ class Pagination {
             limit: Int,
             seekValues: List<Any?>,
             mapper: (record: R) -> E
-        ): List<E> {
+        ): Seek<E> {
             val sortFields = sortFields(sort, dsl)
 
             if (seekValues.isNotEmpty()) {
@@ -57,15 +57,19 @@ class Pagination {
                 }
             }
 
-            return query
+            val content = query
                 .orderBy(sortFields)
                 .apply {
                     if (seekValues.isNotEmpty()) {
                         seek(*seekValues.toTypedArray())
                     }
                 }
-                .limit(limit)
+                .limit(limit + 1)
                 .map(mapper)
+
+            val hasNext = content.size > limit
+
+            return Seek(hasNext, content.take(limit))
         }
 
         @JvmStatic
