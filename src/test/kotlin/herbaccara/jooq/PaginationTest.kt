@@ -101,7 +101,7 @@ class PaginationTest {
             it.value1() to it.value2()
         }
 
-        assertEquals(22, page.totalElements)
+        assertEquals(24, page.totalElements)
         assertTrue(page.hasNext())
     }
 

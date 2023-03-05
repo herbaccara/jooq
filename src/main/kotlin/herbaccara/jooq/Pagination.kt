@@ -40,6 +40,7 @@ class Pagination {
             }.toList()
         }
 
+        // https://blog.jooq.org/faster-sql-paging-with-jooq-using-the-seek-method/
         @JvmStatic
         fun <R : Record, E> ofSeek(
             dsl: DSLContext,
@@ -96,22 +97,15 @@ class Pagination {
             pageable: Pageable,
             mapper: (record: R) -> E
         ): Page<E> {
-            val sql = query.sql
-            val bindValues = query.bindValues
+            val total = dsl.fetchCount(query)
 
-            val content = query
-                .orderBy(sortFields(pageable.sort, dsl))
-                .limit(pageable.offset, pageable.pageSize)
-                .map(mapper)
-
-            val total = if (content.size < pageable.pageSize) {
-                content.size
+            val content = if (total == 0) {
+                emptyList()
             } else {
-                dsl
-                    .select(DSL.count())
-                    .from("( $sql )", *bindValues.toTypedArray())
-                    .single()
-                    .value1()
+                query
+                    .orderBy(sortFields(pageable.sort, dsl))
+                    .limit(pageable.offset, pageable.pageSize)
+                    .map(mapper)
             }
 
             return PageImpl(content, pageable, total.toLong())
