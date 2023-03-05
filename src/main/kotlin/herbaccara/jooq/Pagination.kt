@@ -99,12 +99,9 @@ class Pagination {
             mapper: (record: R) -> E
         ): Page<E> {
             val total = dsl.fetchCount(query)
+            val totalPages by lazy { if (total == 0) 1 else ceil(total.toDouble() / pageable.pageSize).toInt() }
 
-            val totalPages: (total: Int) -> Int = { t ->
-                if (t == 0) 1 else ceil(t.toDouble() / pageable.pageSize).toInt()
-            }
-
-            val content = if (total > 0 && totalPages(total) >= (pageable.pageNumber + 1)) {
+            val content = if (total > 0 && totalPages >= (pageable.pageNumber + 1)) {
                 query
                     .orderBy(sortFields(pageable.sort, dsl))
                     .limit(pageable.offset, pageable.pageSize)
