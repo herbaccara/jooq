@@ -6,6 +6,7 @@ import org.jooq.impl.DSL
 import org.springframework.data.domain.*
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.domain.Sort.NullHandling
+import kotlin.math.ceil
 
 class Pagination {
 
@@ -99,13 +100,17 @@ class Pagination {
         ): Page<E> {
             val total = dsl.fetchCount(query)
 
-            val content = if (total == 0) {
-                emptyList()
-            } else {
+            val totalPages: (total: Int) -> Int = { t ->
+                if (t == 0) 1 else ceil(t.toDouble() / pageable.pageSize).toInt()
+            }
+
+            val content = if (total > 0 && totalPages(total) >= (pageable.pageNumber + 1)) {
                 query
                     .orderBy(sortFields(pageable.sort, dsl))
                     .limit(pageable.offset, pageable.pageSize)
                     .map(mapper)
+            } else {
+                emptyList()
             }
 
             return PageImpl(content, pageable, total.toLong())
