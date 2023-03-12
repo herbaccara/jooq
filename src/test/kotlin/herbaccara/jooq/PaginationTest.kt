@@ -38,6 +38,24 @@ class PaginationTest {
         )
 
     @Test
+    fun update() {
+        val query = dsl
+            .update(table)
+            .set(title, "testttttt")
+            .setNull(DSL.noField())
+            .where(
+                id.eq(1)
+            )
+
+        println("isExecutable : " + query.isExecutable)
+
+        val execute = query
+            .execute()
+
+        println("execute : " + execute)
+    }
+
+    @Test
     fun seek() {
         val query: () -> SelectConditionStep<Record3<Int, String, Int>> = {
             dsl
